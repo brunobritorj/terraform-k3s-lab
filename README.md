@@ -8,8 +8,8 @@
 
 3. Check these variables before applying it:
 
-  - ```resourceGroupName```: Shouldn't exist in your subscription.
-  - ```vmPrefixName```: Shouldn't overlap with current VM's in your subscription.
-  - ```vmUsername```: Should match your keys.
+  - ```rg_name```: Shouldn't exist in your subscription.
+  - ```vm_prefix_name```: Shouldn't overlap with current VM's in your subscription.
+  - ```vm_username```: Should match your keys.
 
 4. Have fun with the ```terraform apply```.
