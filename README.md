@@ -23,7 +23,7 @@
 
 4. Deploy it with `terraform apply`.
 
-5. Log in to the VM, and have fun (`ssh gw` / `ssh k3s-1` / `ssh k3s-2` / ...).
+5. Log in to the VM, and have fun (`ssh gw` / `ssh k3s-0` / `ssh k3s-1` / ...).
 
 ## Topology
 

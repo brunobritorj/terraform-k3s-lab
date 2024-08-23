@@ -13,7 +13,7 @@ locals {
 
   k3s_list = [
     for idx, vm in azurerm_linux_virtual_machine.k3s_server : {
-      name = "k3s-${tostring(idx + 1)}"
+      name = "k3s-${tostring(idx)}"
       ip   = vm.private_ip_address
     }
   ]
