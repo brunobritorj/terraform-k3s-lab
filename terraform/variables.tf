@@ -11,8 +11,8 @@ variable "rg_name" {
 }
 
 variable "vnet_specs" {
-  description         = "Virtual Network(s) specifications to be created"
-  type    = object({
+  description = "Virtual Network(s) specifications to be created"
+  type = object({
     name           = string
     address_space  = string
     subnet_name    = string
@@ -32,12 +32,6 @@ variable "vm_username" {
   default     = "bruno"
 }
 
-variable "vm_user_pubkey_file" {
-  description = "Path to the user PUBLIC key"
-  type        = string
-  default     = "~/.ssh/id_rsa.pub"
-}
-
 variable "vm_prefix_name" {
   description = "Prefix used for naming VM(s)"
   type        = string
@@ -50,8 +44,18 @@ variable "vm_size" {
   default     = "Standard_A1_v2"
 }
 
+variable "vm_k3_nodes" {
+  description = "How many K3s nodes"
+  type        = number
+  default     = 1
+  validation {
+    condition     = var.vm_k3_nodes >= 1 && var.vm_k3_nodes <= 5
+    error_message = "Value must be between 1 and 5"
+  }
+}
+
 variable "tags" {
-  type  = map(string)
+  type = map(string)
   default = {
     env = "lab"
   }
