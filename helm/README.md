@@ -1,0 +1,1 @@
+# Smallest sample Helm Chart

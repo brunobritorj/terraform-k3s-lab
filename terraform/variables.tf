@@ -26,12 +26,6 @@ variable "vnet_specs" {
   }
 }
 
-variable "vm_username" {
-  description = "Username to connect to VM(s)"
-  type        = string
-  default     = "bruno"
-}
-
 variable "vm_prefix_name" {
   description = "Prefix used for naming VM(s)"
   type        = string
@@ -52,6 +46,12 @@ variable "vm_k3_nodes" {
     condition     = var.vm_k3_nodes >= 1 && var.vm_k3_nodes <= 5
     error_message = "Value must be between 1 and 5"
   }
+}
+
+variable "ip_dns_label" {
+  description = "(optional) Label for DNS name of the Az Public IP"
+  type        = string
+  default     = "bbrj-k3s-lab"
 }
 
 variable "tags" {

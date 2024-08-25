@@ -4,11 +4,12 @@
 
 - Do not use it in production environments. It's a quick lab.
 - It's an IaaS lab foccussed on K3s (so no AKS, AzLoadBalancer...).
+- Check the [Makefile](Makefile).
 
 ## Requirements
 
 - Docker, in order to support DevContainers.
-- VSCode with DevContainrs plugin.
+- VSCode with DevContainers plugin.
 
 ## How to
 
@@ -23,7 +24,7 @@
 
 4. Deploy it with `terraform apply`.
 
-5. Log in to the VM, and have fun (`ssh gw` / `ssh k3s-0` / `ssh k3s-1` / ...).
+5. Connect to VMs and have fun (`ssh gw` / `ssh k3s0` / ...).
 
 ## Topology
 
@@ -35,5 +36,5 @@ flowchart LR
 ```
 
 - Server sufixed by (`-gw`) is the proxy for all traffic (`ssh` and `http/https`).
-- Server sufixed by (`-0`) is the K3s server.
-- Any other server is a K3s node.
+- Server sufixed by (`-k3s0`) is the K3s server.
+- Any other server is a K3s agent.

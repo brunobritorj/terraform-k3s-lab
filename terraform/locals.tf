@@ -1,20 +1,24 @@
 locals {
   
-  ssh_folder        = "/home/vscode/.ssh"
+  # DevContainer image parameters
+  home_folder        = "/home/vscode"
   server_admin_name = "vscode"
-  server_gw_name    = "${var.vm_prefix_name}-gw"
 
-  k3s_servers_for_config_files = [
-    for vm in azurerm_linux_virtual_machine.k3s_server : {
-      name = vm.computer_name
-      ip   = vm.private_ip_address
-    }
-  ]
-
+  # K3s parameters
+  k3s_cmds_server = <<-SCRIPT
+      #!/bin/bash
+      curl -sfL https://get.k3s.io | K3S_TOKEN=${random_password.k3s_token.result} sh -s - server --write-kubeconfig-mode 644
+      sudo snap install helm --classic
+    SCRIPT
+  k3s_cmds_agent  = <<-SCRIPT
+      #!/bin/bash
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='agent --server https://${var.vm_prefix_name}-k3s-0:6443 --token ${random_password.k3s_token.result}' sh -s -
+    SCRIPT
   k3s_list = [
-    for idx, vm in azurerm_linux_virtual_machine.k3s_server : {
-      name = "k3s-${tostring(idx)}"
-      ip   = vm.private_ip_address
+    for i in range(var.vm_k3_nodes) : {
+      name = "k3s${i}"
+      ip   = cidrhost(var.vnet_specs.subnet_address, 10 + i)
     }
   ]
 }
+

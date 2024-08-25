@@ -1,29 +1,30 @@
-resource "azurerm_network_interface" "k3s_server" {
+resource "azurerm_network_interface" "k3s" {
   count = var.vm_k3_nodes
 
-  name                = "${var.vm_prefix_name}-k3s-${count.index}-nic"
+  name                = "${var.vm_prefix_name}-k3s${count.index}-nic"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   tags                = var.tags
 
   ip_configuration {
-    name                          = "${var.vm_prefix_name}-k3s-${count.index}-ip"
+    name                          = "${var.vm_prefix_name}-k3s${count.index}-ip"
     subnet_id                     = azurerm_subnet.main.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = cidrhost(var.vnet_specs.subnet_address, 10 + count.index)
   }
 }
 
-resource "azurerm_linux_virtual_machine" "k3s_server" {
+resource "azurerm_linux_virtual_machine" "k3s" {
   count = var.vm_k3_nodes
 
-  name                  = "${var.vm_prefix_name}-k3s-${count.index}"
+  name                  = "${var.vm_prefix_name}-k3s${count.index}"
   resource_group_name   = azurerm_resource_group.main.name
   location              = azurerm_resource_group.main.location
   size                  = var.vm_size
   admin_username        = local.server_admin_name
   admin_password        = random_password.vm_admin.result
   availability_set_id   = azurerm_availability_set.main.id
-  network_interface_ids = [azurerm_network_interface.k3s_server[count.index].id]
+  network_interface_ids = [azurerm_network_interface.k3s[count.index].id]
   tags                  = var.tags
 
   admin_ssh_key {
@@ -44,16 +45,7 @@ resource "azurerm_linux_virtual_machine" "k3s_server" {
   }
 
   custom_data = base64encode(
-    count.index == 0 ? <<-SCRIPT
-      #!/bin/bash
-      bash -c /tmp/add_user.sh
-      curl -sfL https://get.k3s.io | K3S_TOKEN=${random_password.k3s_token.result} sh -s - server --write-kubeconfig-mode 644
-    SCRIPT
-    : <<-SCRIPT
-      #!/bin/bash
-      bash -c /tmp/add_user.sh
-      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='agent --server https://${var.vm_prefix_name}-k3s-0:6443 --token ${random_password.k3s_token.result}' sh -s -
-    SCRIPT
+    count.index == 0 ? local.k3s_cmds_server : local.k3s_cmds_agent
   )
 
 }

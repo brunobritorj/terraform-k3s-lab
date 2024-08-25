@@ -1,0 +1,5 @@
+{
+  "remote.containers.defaultExtensions": [
+    "ms-vscode-remote.remote-containers"
+  ]
+}

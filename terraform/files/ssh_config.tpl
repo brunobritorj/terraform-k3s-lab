@@ -2,7 +2,6 @@ Host *
     User ${username}
     IdentityFile ~/.ssh/lab_id_rsa
     StrictHostKeyChecking no
-    UserKnownHostsFile=/dev/null
     ForwardAgent yes
 
 Host gw

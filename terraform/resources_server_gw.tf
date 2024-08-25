@@ -1,19 +1,20 @@
 resource "azurerm_public_ip" "server_gw" {
-  name                = "${local.server_gw_name}-pubip"
+  name                = "${var.vm_prefix_name}-gw-pubip"
   allocation_method   = "Static"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
+  domain_name_label   = var.ip_dns_label
   tags                = var.tags
 }
 
 resource "azurerm_network_interface" "server_gw" {
-  name                = "${local.server_gw_name}-nic"
+  name                = "${var.vm_prefix_name}-gw-nic"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   tags                = var.tags
 
   ip_configuration {
-    name                          = "${local.server_gw_name}-ip1"
+    name                          = "${var.vm_prefix_name}-gw-ip1"
     subnet_id                     = azurerm_subnet.main.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.server_gw.id
@@ -21,7 +22,7 @@ resource "azurerm_network_interface" "server_gw" {
 }
 
 resource "azurerm_linux_virtual_machine" "server_gw" {
-  name                  = local.server_gw_name
+  name                  = "${var.vm_prefix_name}-gw"
   resource_group_name   = azurerm_resource_group.main.name
   location              = azurerm_resource_group.main.location
   size                  = var.vm_size
@@ -54,7 +55,7 @@ resource "azurerm_linux_virtual_machine" "server_gw" {
       user        = local.server_admin_name
       private_key = tls_private_key.ssh_key.private_key_openssh
     }
-    content     = templatefile("files/haproxy.cfg.tpl", {vms = local.k3s_servers_for_config_files})
+    content     = templatefile("files/haproxy.cfg.tpl", {vms = local.k3s_list})
     destination = "/tmp/haproxy.cfg"
   }
 
@@ -67,17 +68,14 @@ resource "azurerm_linux_virtual_machine" "server_gw" {
     }
     inline = [
       "sudo apt update && sudo apt install haproxy -y",
+      "until systemctl is-active --quiet haproxy; do echo 'Waiting for HAProxy to start...'; sleep 5; done",
       "sudo mv /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg",
       "sudo systemctl reload haproxy"
     ]
   }
 }
 
-output "server_public_ip" {
-  value = azurerm_linux_virtual_machine.server_gw.public_ip_address
+output "gw_public_ip" {
+  value = azurerm_public_ip.server_gw.ip_address
   description = "Public IP address"
-  depends_on  = [
-    azurerm_linux_virtual_machine.server_gw,
-    azurerm_public_ip.server_gw
-  ]
 }
