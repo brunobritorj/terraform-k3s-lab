@@ -1,0 +1,8 @@
+ingress:
+  enabled: true
+  hostname: sample-app.local
+  tls:
+    enabled: false
+    clusterIssuer:
+      name: letsencrypt-prod
+      kind: ClusterIssuer

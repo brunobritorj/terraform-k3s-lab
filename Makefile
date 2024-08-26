@@ -10,9 +10,13 @@ destroy:
 
 helm_prepare:
 	scp -r helm k3s0:/tmp/helm
+	ssh k3s0 mkdir -p ~/.kube
 	ssh k3s0 cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 	ssh k3s0 chmod 600 ~/.kube/config
 
-helm_install:
-	ssh k3s0 helm upgrade --install --create-namespace --namespace home home /tmp/helm --set ingress.hostname bbrj-k3s-lab.eastus.cloudapp.azure.com
- 
+helm_deploy_cert:
+	ssh k3s0 helm repo add jetstack https://charts.jetstack.io --force-update
+	ssh k3s0 helm upgrade --install --create-namespace --namespace cert-manager cert-manager --version v1.15.3 jetstack/cert-manager --set crds.enabled=true
+
+helm_deploy_app:
+	ssh k3s0 helm upgrade --install --create-namespace --namespace home home /tmp/helm/app --set ingress.hostname=k3s.bbrj.eu --set ingress.tls.enabled=true

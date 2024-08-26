@@ -1,5 +1,6 @@
 {
   "remote.containers.defaultExtensions": [
-    "ms-vscode-remote.remote-containers"
-  ]
+      "ms-vscode-remote.remote-containers"
+  ],
+  "remote.autoForwardPorts": false
 }

@@ -30,7 +30,7 @@
 
 ```mermaid
 flowchart LR
-    C("Gateway<br>") --> D["K3s Server"] & E["K3s Node 1"] & F["K3s Node n"]
+    C("Gateway<br>") --> D["K3s Server"] & E["K3s Agent 1"] & F["K3s Agent n"]
     n1[/"Admin (ssh)"\] --> C
     n2[/"User (web)"\] --> C
 ```

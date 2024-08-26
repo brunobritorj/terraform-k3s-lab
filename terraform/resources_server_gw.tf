@@ -48,6 +48,19 @@ resource "azurerm_linux_virtual_machine" "server_gw" {
     version   = "latest"
   }
 
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      host        = azurerm_public_ip.server_gw.ip_address
+      user        = local.server_admin_name
+      private_key = tls_private_key.ssh_key.private_key_openssh
+    }
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get -y install haproxy"
+    ]
+  }
+
   provisioner "file" {
     connection {
       type        = "ssh"
@@ -67,7 +80,7 @@ resource "azurerm_linux_virtual_machine" "server_gw" {
       private_key = tls_private_key.ssh_key.private_key_openssh
     }
     inline = [
-      "sudo apt update && sudo apt install haproxy -y",
+      "sudo apt-get -y install haproxy",
       "until systemctl is-active --quiet haproxy; do echo 'Waiting for HAProxy to start...'; sleep 5; done",
       "sudo mv /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg",
       "sudo systemctl reload haproxy"

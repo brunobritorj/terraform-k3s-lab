@@ -12,7 +12,7 @@ locals {
     SCRIPT
   k3s_cmds_agent  = <<-SCRIPT
       #!/bin/bash
-      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='agent --server https://${var.vm_prefix_name}-k3s-0:6443 --token ${random_password.k3s_token.result}' sh -s -
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='agent --server https://${var.vm_prefix_name}-k3s0:6443 --token ${random_password.k3s_token.result}' sh -s -
     SCRIPT
   k3s_list = [
     for i in range(var.vm_k3_nodes) : {
