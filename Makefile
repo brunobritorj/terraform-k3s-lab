@@ -16,7 +16,7 @@ helm_prepare:
 
 helm_deploy_cert:
 	ssh k3s0 helm repo add jetstack https://charts.jetstack.io --force-update
-	ssh k3s0 helm upgrade --install --create-namespace --namespace cert-manager cert-manager --version v1.15.3 jetstack/cert-manager --set crds.enabled=true
+	ssh k3s0 helm upgrade --install --create-namespace --namespace cert-manager cert-manager --version v1.15.3 jetstack/cert-manager --set crds.enabled=true --file /tmp/helm/cert/values.yaml
 
 helm_deploy_app:
-	ssh k3s0 helm upgrade --install --create-namespace --namespace home home /tmp/helm/app --set ingress.hostname=k3s.bbrj.eu --set ingress.tls.enabled=true
+	ssh k3s0 helm upgrade --install --create-namespace --namespace home home /tmp/helm/app --set ingress.hostname=your.app.local --set ingress.tls.enabled=true

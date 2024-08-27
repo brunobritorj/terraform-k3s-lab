@@ -1,6 +1,8 @@
 {
-  "remote.containers.defaultExtensions": [
-      "ms-vscode-remote.remote-containers"
-  ],
-  "remote.autoForwardPorts": false
+  "extensions.ignoreRecommendations": true,
+  "remote.autoForwardPorts": false,
+  "[terraform]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  }
 }

@@ -18,7 +18,7 @@ resource "local_file" "ssh_config" {
   filename = "${local.home_folder}/.ssh/config"
   content  = templatefile("files/ssh_config.tpl", {
     username  = local.server_admin_name,
-    public_ip = azurerm_public_ip.server_gw.ip_address,
+    public_ip = azurerm_public_ip.gw.ip_address,
     vms       = local.k3s_list
   })
 }
